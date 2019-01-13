@@ -12,35 +12,12 @@ pub struct CompareHands {
 }
 
 fn find_pair(cards: &Vec<Card>) -> Option<(&Card, &Card)> {
-    println!("find_pair");
     cards.windows(2).fold(None, |acc, slice| {
-        // println!("======");
-
-        // println!("find_pair {:?}", slice);
-        // println!("acc {:?} {} ", acc, acc.is_none());
-
         if acc.is_none() {
             let left = &slice[0];
             let right = &slice[1];
 
-            // println!(
-            //     "lr {:?} {:?} {:?}",
-            //     left.rank,
-            //     right.rank,
-            //     left.rank == right.rank,
-            // );
-
-            // println!(
-            //     "lr {:?} {:?} {:?} {:?} {:?}",
-            //     left,
-            //     right,
-            //     left == right,
-            //     left.rank == right.rank,
-            //     left.suit == right.suit
-            // );
-
             if left.rank == right.rank {
-                // println!("they match!");
                 return Some((&left, &right));
             }
         }
