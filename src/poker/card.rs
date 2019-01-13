@@ -7,7 +7,7 @@ pub struct Card {
     suit: Suit,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum CardError {
     InvalidSuit(char),
     InvalidRank(char),

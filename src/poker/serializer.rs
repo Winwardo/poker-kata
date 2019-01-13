@@ -11,17 +11,32 @@ use super::suits::*;
 pub enum DeserializeError {
     BadFormat,
     InvalidHand(HandError),
-    InvalidCards,
+    InvalidCards(CardError),
     Other,
 }
 
-fn text_to_cards(text: &str) -> Vec<Card> {
-    text.split(" ")
+fn text_to_cards(text: &str) -> Result<Vec<Card>, CardError> {
+    let cards = text
+        .split(" ")
         .collect::<Vec<&str>>()
         .into_iter()
-        .map(|card_str| Card::from_string(card_str))
-        .filter_map(|card| card.ok())
-        .collect::<Vec<Card>>()
+        .map(|card_str| Card::from_string(card_str));
+
+    let mut result: Vec<Card> = Vec::new();
+    for card in cards {
+        if card.is_err() {
+            return Err(card.unwrap_err());
+        } else {
+            result.push(card.unwrap());
+        }
+    }
+
+    Ok(result)
+}
+
+fn deserialize_cards_to_hand(text: &str) -> Result<Hand, DeserializeError> {
+    Hand::new(text_to_cards(text).map_err(|e| DeserializeError::InvalidCards(e))?)
+        .map_err(|e| DeserializeError::InvalidHand(e))
 }
 
 pub fn deserialize(input: &str) -> Result<CompareHands, DeserializeError> {
@@ -40,10 +55,8 @@ pub fn deserialize(input: &str) -> Result<CompareHands, DeserializeError> {
             // Convert text to lists of Card
             let (black_text, white_text) = matches;
 
-            let black_hand = Hand::new(text_to_cards(black_text))
-                .map_err(|e| DeserializeError::InvalidHand(e))?;
-            let white_hand = Hand::new(text_to_cards(white_text))
-                .map_err(|e| DeserializeError::InvalidHand(e))?;
+            let black_hand = deserialize_cards_to_hand(black_text)?;
+            let white_hand = deserialize_cards_to_hand(white_text)?;
 
             Ok(CompareHands {
                 black: black_hand,
@@ -89,5 +102,23 @@ mod tests {
     fn bad_format_errors() {
         let input = "Bad format";
         assert_eq!(Err(DeserializeError::BadFormat), deserialize(&input));
+    }
+
+    #[test]
+    fn bad_hand_black_has_too_few() {
+        let input = "Black: 2H 3D 5S 9C  White: 2C 3H 4S 8C AH";
+        assert_eq!(
+            Err(DeserializeError::InvalidHand(HandError::NotEnoughCards)),
+            deserialize(&input)
+        );
+    }
+
+    #[test]
+    fn bad_card_invalid_suit() {
+        let input = "Black: 2Z 3D 5S 9C KD  White: 2C 3H 4S 8C AH";
+        assert_eq!(
+            Err(DeserializeError::InvalidCards(CardError::InvalidSuit('Z'))),
+            deserialize(&input)
+        );
     }
 }
