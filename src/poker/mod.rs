@@ -1,1 +1,1 @@
-pub mod suits
+pub mod suits;

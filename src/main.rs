@@ -22,7 +22,7 @@ enum CardRank {
 
 struct Card {
     rank: CardRank,
-    suit: Suit,
+    suit: poker::suits::Suit,
 }
 
 struct Hand {
