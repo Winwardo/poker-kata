@@ -1,6 +1,7 @@
 use super::comparison_result;
 use super::hand;
 
+#[derive(Debug, PartialEq)]
 pub struct CompareHands {
     pub black: hand::Hand,
     pub white: hand::Hand,
