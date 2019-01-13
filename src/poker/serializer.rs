@@ -1,18 +1,15 @@
 use regex::Regex;
 
 use super::card::*;
-use super::card_rank::*;
 use super::compare_hands::*;
 use super::comparison_result::*;
 use super::hand::*;
-use super::suits::*;
 
 #[derive(Debug, PartialEq)]
 pub enum DeserializeError {
     BadFormat,
     InvalidHand(HandError),
     InvalidCards(CardError),
-    Other,
 }
 
 fn text_to_cards(text: &str) -> Result<Vec<Card>, CardError> {
@@ -72,6 +69,9 @@ pub fn serialize(result: &ComparisonResult) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    use super::super::card_rank::*;
+    use super::super::suits::*;
 
     #[test]
     fn simple_hand_deserializes() {
