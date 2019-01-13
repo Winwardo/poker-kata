@@ -1,5 +1,5 @@
 #[allow(dead_code)]
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
 pub enum CardRank {
     Two = 2,
     Three = 3,

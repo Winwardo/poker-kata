@@ -1,7 +1,7 @@
 use super::card_rank::*;
 use super::suits::*;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
 pub struct Card {
     rank: CardRank,
     suit: Suit,

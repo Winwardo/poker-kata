@@ -40,6 +40,6 @@ mod tests {
         case("Tie.", "Black: 2H 3D 5S 9C KD  White: 2D 3H 5C 9S KH")
     )]
     fn poker_hand_test(expected: &str, input: &str) {
-        assert_eq!(expected, poker_hand(input));
+        assert_eq!(Ok(expected.to_string()), poker_hand(input));
     }
 }
