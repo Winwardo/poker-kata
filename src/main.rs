@@ -16,8 +16,8 @@ fn poker_hand(input: &str) -> String {
     //         suit: poker::Suit::Clubs
     //     }
     // );
-    String::from("Hello")
-    // poker::serialize(&poker::deserialize(input).compare())
+    // String::from("Hello")
+    poker::serialize(&poker::deserialize(input).compare())
 }
 
 #[cfg(test)]
