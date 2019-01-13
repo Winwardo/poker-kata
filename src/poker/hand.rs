@@ -21,10 +21,12 @@ impl Hand {
         match cards.len() {
             x if x < 5 => Err(HandError::NotEnoughCards),
             x if x > 5 => Err(HandError::TooManyCards),
-            _ => {
-                let r = BTreeSet::from_iter(cards.clone());
-
-                Ok(Hand { cards: cards })
+            x => {
+                if BTreeSet::from_iter(cards.clone()).len() == x {
+                    Ok(Hand { cards: cards })
+                } else {
+                    Err(HandError::DuplicatedCards)
+                }
             }
         }
     }
