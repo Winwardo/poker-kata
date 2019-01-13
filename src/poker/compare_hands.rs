@@ -1,17 +1,18 @@
-use super::comparison_result;
-use super::hand;
+use super::comparison_result::*;
+use super::hand::*;
 
 #[derive(Debug, PartialEq)]
 pub struct CompareHands {
-    pub black: hand::Hand,
-    pub white: hand::Hand,
+    pub black: Hand,
+    pub white: Hand,
 }
 
 impl CompareHands {
-    pub fn compare(&self) -> comparison_result::ComparisonResult {
-        comparison_result::ComparisonResult {
-            winner: comparison_result::Players::Black,
-            win_type: comparison_result::WinType::HighCard,
+
+    pub fn compare(&self) -> ComparisonResult {
+        ComparisonResult {
+            winner: Players::Black,
+            win_type: WinType::HighCard,
         }
     }
 }

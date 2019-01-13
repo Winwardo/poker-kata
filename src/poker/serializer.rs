@@ -1,3 +1,5 @@
+use regex::Regex;
+
 use super::card::*;
 use super::card_rank::*;
 use super::compare_hands::*;
@@ -10,8 +12,65 @@ pub enum CompareHandsError {
     Other,
 }
 
-pub fn deserialize(input: &str) -> Result<CompareHands, CompareHandsError> {
-    Err(CompareHandsError::Other)
+#[derive(Debug, PartialEq)]
+pub enum DeserializeError {
+    CompareHands(CompareHandsError),
+    BadFormat,
+    Other,
+}
+
+pub fn deserialize(input: &str) -> Result<CompareHands, DeserializeError> {
+    println!("desering");
+    let re = Regex::new(r"^Black: (.*)  White: (.*)$").unwrap();
+
+    // let captures = re.captures(input);
+    // if captures.unwrap().len() == 1 {
+    // for cap in captures {
+    //     let black_text = &cap[0];
+    //     let white_text = &cap[1];
+
+    //         let black_card = Card::from_string(black_text);
+    //     }
+    // }
+    re.captures(input)
+        .and_then(|captures| {
+            // Did we match something after "Black" and after "White"?
+            let black = captures.get(0);
+            let white = captures.get(1);
+
+            if black.is_some() && white.is_some() {
+                Some((black.unwrap(), white.unwrap()))
+            } else {
+                None
+            }
+        })
+        .ok_or(DeserializeError::BadFormat)
+        // .map(|matches| {
+        //     println!("MATCHED THIS: {:?}", matches);
+        //     matches
+        // })
+        // .map(|capture| capture.get(0).and(capture.get(1)))
+        // .and_then(|thing| {
+        //     // captures.get(0).
+        //     // if captures.len() != 1 {
+        //     //     return None;
+        //     // };
+        //     // let cap = captures[0];
+        //     // if captures.len() == 1 {
+        // Some(CompareHands {
+        //     black: Hand::new(vec![]).unwrap(),
+        //     white: Hand::new(vec![]).unwrap(),
+        // })
+        //     // } else {
+        //     //     None
+        //     // }
+        // })
+        .map(|_| CompareHands {
+            black: Hand::new(vec![]).unwrap(),
+            white: Hand::new(vec![]).unwrap(),
+        })
+
+    // .ok_or(DeserializeError::Other)
 }
 
 pub fn serialize(result: &ComparisonResult) -> String {
@@ -44,7 +103,12 @@ mod tests {
             .unwrap(),
         };
 
-        // Err("no")
         assert_eq!(Ok(expected), deserialize(&input));
+    }
+
+    #[test]
+    fn bad_format_errors() {
+        let input = "Bad format";
+        assert_eq!(Err(DeserializeError::BadFormat), deserialize(&input));
     }
 }

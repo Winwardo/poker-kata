@@ -14,4 +14,8 @@ impl Card {
             suit: suit,
         }
     }
+
+    pub fn from_string(input: &str) -> Option<Card> {
+        None
+    }
 }
