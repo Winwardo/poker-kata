@@ -6,6 +6,7 @@ use super::card::*;
 #[derive(Debug, PartialEq, Eq)]
 pub struct Hand {
     pub cards: Vec<Card>,
+    _c: (),
 }
 
 #[derive(Debug, PartialEq)]
@@ -22,7 +23,10 @@ impl Hand {
             x if x > 5 => Err(HandError::TooManyCards),
             x => {
                 if BTreeSet::from_iter(cards.clone()).len() == x {
-                    Ok(Hand { cards: cards })
+                    Ok(Hand {
+                        cards: cards,
+                        _c: (),
+                    })
                 } else {
                     Err(HandError::DuplicatedCards)
                 }
