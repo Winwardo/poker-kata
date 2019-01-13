@@ -5,3 +5,6 @@ authors = ["Topher Winward <winwardo@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+
+[dev-dependencies]
+rstest = "0.2.2"
