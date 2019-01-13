@@ -12,15 +12,11 @@ pub struct CompareHands {
 
 impl CompareHands {
     pub fn compare(&self) -> ComparisonResult {
-        // Check for tie {
+        // Check for tie
         let highest_rank_black = &self.black.cards.iter().max().unwrap();
         let highest_rank_white = &self.white.cards.iter().max().unwrap();
 
-        println!("black, {:?}", highest_rank_black);
-        println!("white, {:?}", highest_rank_white);
-
         if highest_rank_black > highest_rank_white {
-            println!("black wins");
             ComparisonResult {
                 winner: Some(Winner {
                     player: Players::Black,
@@ -28,8 +24,6 @@ impl CompareHands {
                 }),
             }
         } else if highest_rank_black < highest_rank_white {
-            println!("white wins");
-
             ComparisonResult {
                 winner: Some(Winner {
                     player: Players::White,
@@ -37,7 +31,6 @@ impl CompareHands {
                 }),
             }
         } else {
-            println!("didnrt get a winner, tie??");
             ComparisonResult { winner: None }
         }
     }
