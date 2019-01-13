@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub enum CardRank {
     Two = 2,
     Three = 3,

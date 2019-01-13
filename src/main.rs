@@ -4,59 +4,20 @@ fn main() {
 
 mod poker;
 
-use self::poker::*;
-
-struct Card {
-    rank: card_rank::CardRank,
-    suit: suits::Suit,
-}
-
-struct Hand {
-    cards: Vec<Card>,
-}
-
-enum Players {
-    Black,
-    White,
-}
-
-enum WinType {
-    HighCard,
-}
-
-struct CompareHands {
-    black: Hand,
-    white: Hand,
-}
-
-struct ComparisonResult {
-    winner: Players,
-    win_type: WinType,
-}
-
-impl CompareHands {
-    fn compare(&self) -> ComparisonResult {
-        ComparisonResult {
-            winner: Players::Black,
-            win_type: WinType::HighCard,
-        }
-    }
-}
-
-fn deserialize(input: &str) -> CompareHands {
-    CompareHands {
-        black: Hand { cards: vec![] },
-        white: Hand { cards: vec![] },
-    }
-}
-
-fn serialize(result: &ComparisonResult) -> String {
-    String::from("White wins. - with high card: Ace")
-}
+// use self::poker::*;
 
 #[allow(dead_code)]
 fn poker_hand(input: &str) -> String {
-    serialize(&deserialize(input).compare())
+    // println!("{:?}, {:?}", poker::CardRank::Two, poker::Suit::Clubs);
+    // println!(
+    //     "{:?}",
+    //     poker::Card {
+    //         rank: poker::CardRank::Two,
+    //         suit: poker::Suit::Clubs
+    //     }
+    // );
+    String::from("Hello")
+    // poker::serialize(&poker::deserialize(input).compare())
 }
 
 #[cfg(test)]
