@@ -15,7 +15,7 @@ impl Card {
         }
     }
 
-    pub fn from_string(input: &str) -> Option<Card> {
-        None
+    pub fn from_string(input: &str) -> Result<Card, ()> {
+        Err(())
     }
 }

@@ -16,7 +16,17 @@ pub enum CompareHandsError {
 pub enum DeserializeError {
     CompareHands(CompareHandsError),
     BadFormat,
+    InvalidCards,
     Other,
+}
+
+fn text_to_cards(text: &str) -> Vec<Card> {
+    text.split(" ")
+        .collect::<Vec<&str>>()
+        .into_iter()
+        .map(|card_str| Card::from_string(card_str))
+        .filter_map(|card| card.ok())
+        .collect::<Vec<Card>>()
 }
 
 pub fn deserialize(input: &str) -> Result<CompareHands, DeserializeError> {
@@ -35,42 +45,39 @@ pub fn deserialize(input: &str) -> Result<CompareHands, DeserializeError> {
     re.captures(input)
         .and_then(|captures| {
             // Did we match something after "Black" and after "White"?
-            let black = captures.get(0);
-            let white = captures.get(1);
+            let black = captures.get(1);
+            let white = captures.get(2);
 
             if black.is_some() && white.is_some() {
-                Some((black.unwrap(), white.unwrap()))
+                Some((black.unwrap().as_str(), white.unwrap().as_str()))
             } else {
                 None
             }
         })
         .ok_or(DeserializeError::BadFormat)
-        // .map(|matches| {
-        //     println!("MATCHED THIS: {:?}", matches);
-        //     matches
-        // })
-        // .map(|capture| capture.get(0).and(capture.get(1)))
-        // .and_then(|thing| {
-        //     // captures.get(0).
-        //     // if captures.len() != 1 {
-        //     //     return None;
-        //     // };
-        //     // let cap = captures[0];
-        //     // if captures.len() == 1 {
-        // Some(CompareHands {
-        //     black: Hand::new(vec![]).unwrap(),
-        //     white: Hand::new(vec![]).unwrap(),
-        // })
-        //     // } else {
-        //     //     None
-        //     // }
-        // })
-        .map(|_| CompareHands {
-            black: Hand::new(vec![]).unwrap(),
-            white: Hand::new(vec![]).unwrap(),
-        })
+        .and_then(|matches| {
+            let (black_text, white_text) = matches;
 
-    // .ok_or(DeserializeError::Other)
+            let black_cards = text_to_cards(black_text);
+            let white_cards = text_to_cards(white_text);
+
+            println!("black cards? {:?}", black_cards);
+            println!("white cards? {:?}", white_cards);
+
+            Ok((black_cards, white_cards))
+        })
+        .and_then(|(black, white)| {
+            let black_hand = Hand::new(black);
+            let white_hand = Hand::new(white);
+            if black_hand.is_ok() && white_hand.is_ok() {
+                Ok(CompareHands {
+                    black: black_hand.unwrap(),
+                    white: white_hand.unwrap(),
+                })
+            } else {
+                Err(DeserializeError::Other)
+            }
+        })
 }
 
 pub fn serialize(result: &ComparisonResult) -> String {
