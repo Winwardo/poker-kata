@@ -3,8 +3,8 @@ use super::suits::*;
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
 pub struct Card {
-    rank: CardRank,
-    suit: Suit,
+    pub rank: CardRank,
+    pub suit: Suit,
 }
 
 #[derive(Debug, PartialEq)]

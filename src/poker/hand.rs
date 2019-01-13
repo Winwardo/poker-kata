@@ -3,9 +3,9 @@ use std::iter::FromIterator;
 
 use super::card::*;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct Hand {
-    cards: Vec<Card>,
+    pub cards: Vec<Card>,
 }
 
 #[derive(Debug, PartialEq)]
@@ -13,7 +13,6 @@ pub enum HandError {
     NotEnoughCards,
     TooManyCards,
     DuplicatedCards,
-    InvalidHand,
 }
 
 impl Hand {

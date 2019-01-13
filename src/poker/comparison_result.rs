@@ -11,8 +11,8 @@ pub enum WinType {
 
 #[derive(Debug, PartialEq)]
 pub struct Winner {
-    player: Players,
-    win_type: WinType,
+    pub player: Players,
+    pub win_type: WinType,
 }
 
 #[derive(Debug, PartialEq)]
