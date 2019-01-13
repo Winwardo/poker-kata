@@ -5,11 +5,13 @@ use super::comparison_result::*;
 use super::hand::*;
 use super::suits::*;
 
-pub fn deserialize(input: &str) -> CompareHands {
-    CompareHands {
-        black: Hand::new(vec![]).unwrap(),
-        white: Hand::new(vec![]).unwrap(),
-    }
+#[derive(Debug, PartialEq)]
+pub enum CompareHandsError {
+    Other,
+}
+
+pub fn deserialize(input: &str) -> Result<CompareHands, CompareHandsError> {
+    Err(CompareHandsError::Other)
 }
 
 pub fn serialize(result: &ComparisonResult) -> String {
@@ -42,6 +44,7 @@ mod tests {
             .unwrap(),
         };
 
-        assert_eq!(expected, deserialize(&input));
+        // Err("no")
+        assert_eq!(Ok(expected), deserialize(&input));
     }
 }

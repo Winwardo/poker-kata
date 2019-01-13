@@ -7,17 +7,11 @@ mod poker;
 // use self::poker::*;
 
 #[allow(dead_code)]
-fn poker_hand(input: &str) -> String {
-    // println!("{:?}, {:?}", poker::CardRank::Two, poker::Suit::Clubs);
-    // println!(
-    //     "{:?}",
-    //     poker::Card {
-    //         rank: poker::CardRank::Two,
-    //         suit: poker::Suit::Clubs
-    //     }
-    // );
-    // String::from("Hello")
-    poker::serialize(&poker::deserialize(input).compare())
+fn poker_hand(input: &str) -> Result<String, String> {
+    // NOT SAFE
+    Ok(poker::serialize(
+        &poker::deserialize(input).unwrap().compare(),
+    ))
 }
 
 #[cfg(test)]
