@@ -1,4 +1,3 @@
-// mod poker::compare_hands;
 use super::card::*;
 use super::card_rank::*;
 use super::compare_hands::*;
@@ -8,8 +7,8 @@ use super::suits::*;
 
 pub fn deserialize(input: &str) -> CompareHands {
     CompareHands {
-        black: Hand::new(vec![]),
-        white: Hand::new(vec![]),
+        black: Hand::new(vec![]).unwrap(),
+        white: Hand::new(vec![]).unwrap(),
     }
 }
 
@@ -46,7 +45,8 @@ mod tests {
                     rank: CardRank::King,
                     suit: Suit::Diamonds,
                 },
-            ]),
+            ])
+            .unwrap(),
 
             white: Hand::new(vec![
                 Card {
@@ -69,7 +69,8 @@ mod tests {
                     rank: CardRank::Ace,
                     suit: Suit::Hearts,
                 },
-            ]),
+            ])
+            .unwrap(),
         };
 
         assert_eq!(expected, deserialize(&input));
