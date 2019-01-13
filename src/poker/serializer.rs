@@ -56,15 +56,9 @@ pub fn deserialize(input: &str) -> Result<CompareHands, DeserializeError> {
         })
         .ok_or(DeserializeError::BadFormat)
         .and_then(|matches| {
+            // Convert text to lists of Card
             let (black_text, white_text) = matches;
-
-            let black_cards = text_to_cards(black_text);
-            let white_cards = text_to_cards(white_text);
-
-            println!("black cards? {:?}", black_cards);
-            println!("white cards? {:?}", white_cards);
-
-            Ok((black_cards, white_cards))
+            Ok((text_to_cards(black_text), text_to_cards(white_text)))
         })
         .and_then(|(black, white)| {
             let black_hand = Hand::new(black);
