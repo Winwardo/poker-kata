@@ -82,8 +82,6 @@ impl CompareHands {
                     return ComparisonResult::make(Players::White, WinType::Pair(w1.rank));
                 }
             }
-
-            // if black_pair.is_some() && white_pair.is_some()
         }
 
         // Check for tie
