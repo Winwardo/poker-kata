@@ -25,50 +25,19 @@ mod tests {
         let input = "Black: 2H 3D 5S 9C KD  White: 2C 3H 4S 8C AH";
         let expected = CompareHands {
             black: Hand::new(vec![
-                Card {
-                    rank: CardRank::Two,
-                    suit: Suit::Hearts,
-                },
-                Card {
-                    rank: CardRank::Three,
-                    suit: Suit::Diamonds,
-                },
-                Card {
-                    rank: CardRank::Five,
-                    suit: Suit::Spades,
-                },
-                Card {
-                    rank: CardRank::Nine,
-                    suit: Suit::Clubs,
-                },
-                Card {
-                    rank: CardRank::King,
-                    suit: Suit::Diamonds,
-                },
+                Card::new(CardRank::Two, Suit::Hearts),
+                Card::new(CardRank::Three, Suit::Diamonds),
+                Card::new(CardRank::Five, Suit::Spades),
+                Card::new(CardRank::Nine, Suit::Clubs),
+                Card::new(CardRank::King, Suit::Diamonds),
             ])
             .unwrap(),
-
             white: Hand::new(vec![
-                Card {
-                    rank: CardRank::Two,
-                    suit: Suit::Clubs,
-                },
-                Card {
-                    rank: CardRank::Three,
-                    suit: Suit::Hearts,
-                },
-                Card {
-                    rank: CardRank::Four,
-                    suit: Suit::Spades,
-                },
-                Card {
-                    rank: CardRank::Eight,
-                    suit: Suit::Clubs,
-                },
-                Card {
-                    rank: CardRank::Ace,
-                    suit: Suit::Hearts,
-                },
+                Card::new(CardRank::Two, Suit::Clubs),
+                Card::new(CardRank::Three, Suit::Hearts),
+                Card::new(CardRank::Four, Suit::Spades),
+                Card::new(CardRank::Eight, Suit::Clubs),
+                Card::new(CardRank::Ace, Suit::Hearts),
             ])
             .unwrap(),
         };
