@@ -1,0 +1,7 @@
+[package]
+name = "poker-kata"
+version = "0.1.0"
+authors = ["Topher Winward <winwardo@gmail.com>"]
+edition = "2018"
+
+[dependencies]
