@@ -1,4 +1,15 @@
-use super::card_rank;
+// mod card_rank {
+// pub enum CardRank
+// };
+
+// use crate::{
+//     poker: {
+//         card_rank
+//     }
+// }
+
+use crate::poker::card_rank;
+// use super::card_rank;
 use super::suits;
 
 #[derive(Debug)]
