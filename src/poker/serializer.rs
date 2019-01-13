@@ -8,14 +8,9 @@ use super::hand::*;
 use super::suits::*;
 
 #[derive(Debug, PartialEq)]
-pub enum CompareHandsError {
-    Other,
-}
-
-#[derive(Debug, PartialEq)]
 pub enum DeserializeError {
-    CompareHands(CompareHandsError),
     BadFormat,
+    InvalidHand(HandError),
     InvalidCards,
     Other,
 }
@@ -30,47 +25,30 @@ fn text_to_cards(text: &str) -> Vec<Card> {
 }
 
 pub fn deserialize(input: &str) -> Result<CompareHands, DeserializeError> {
-    println!("desering");
     let re = Regex::new(r"^Black: (.*)  White: (.*)$").unwrap();
 
-    // let captures = re.captures(input);
-    // if captures.unwrap().len() == 1 {
-    // for cap in captures {
-    //     let black_text = &cap[0];
-    //     let white_text = &cap[1];
-
-    //         let black_card = Card::from_string(black_text);
-    //     }
-    // }
     re.captures(input)
         .and_then(|captures| {
             // Did we match something after "Black" and after "White"?
-            let black = captures.get(1);
-            let white = captures.get(2);
+            let black = captures.get(1)?;
+            let white = captures.get(2)?;
 
-            if black.is_some() && white.is_some() {
-                Some((black.unwrap().as_str(), white.unwrap().as_str()))
-            } else {
-                None
-            }
+            Some((black.as_str(), white.as_str()))
         })
         .ok_or(DeserializeError::BadFormat)
         .and_then(|matches| {
             // Convert text to lists of Card
             let (black_text, white_text) = matches;
-            Ok((text_to_cards(black_text), text_to_cards(white_text)))
-        })
-        .and_then(|(black, white)| {
-            let black_hand = Hand::new(black);
-            let white_hand = Hand::new(white);
-            if black_hand.is_ok() && white_hand.is_ok() {
-                Ok(CompareHands {
-                    black: black_hand.unwrap(),
-                    white: white_hand.unwrap(),
-                })
-            } else {
-                Err(DeserializeError::Other)
-            }
+
+            let black_hand = Hand::new(text_to_cards(black_text))
+                .map_err(|e| DeserializeError::InvalidHand(e))?;
+            let white_hand = Hand::new(text_to_cards(white_text))
+                .map_err(|e| DeserializeError::InvalidHand(e))?;
+
+            Ok(CompareHands {
+                black: black_hand,
+                white: white_hand,
+            })
         })
 }
 
