@@ -37,7 +37,7 @@ fn deserialize_cards_to_hand(text: &str) -> Result<Hand, DeserializeError> {
 }
 
 pub fn deserialize(input: &str) -> Result<CompareHands, DeserializeError> {
-    let re = Regex::new(r"^Black: (.*)  White: (.*)$").unwrap();
+    let re = Regex::new(r"^Black: (.*)  White: (.*)$").expect("Invalid Regex in deserializer.");
 
     re.captures(input)
         .and_then(|captures| {
