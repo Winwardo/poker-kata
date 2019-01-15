@@ -1,7 +1,4 @@
-use std::cmp;
-
 use super::card::*;
-use super::card_rank::*;
 use super::comparison_result::*;
 use super::hand::*;
 
@@ -90,7 +87,6 @@ impl CompareHands {
 mod tests {
     use super::*;
 
-    use super::super::card::*;
     use super::super::card_rank::*;
     use super::super::suits::*;
 
@@ -177,25 +173,25 @@ mod tests {
 
     #[test]
     fn pair_both_white_high_card_that_isnt_in_pair_wins() {
-        let input = CompareHands {
-            black: Hand::new(vec![
-                Card::new(CardRank::Ace, Suit::Hearts),
-                Card::new(CardRank::Ace, Suit::Diamonds),
-                Card::new(CardRank::Four, Suit::Hearts),
-                Card::new(CardRank::Five, Suit::Hearts),
-                Card::new(CardRank::Six, Suit::Hearts),
-            ])
-            .unwrap(),
-            white: Hand::new(vec![
-                Card::new(CardRank::Ace, Suit::Clubs),
-                Card::new(CardRank::Ace, Suit::Spades),
-                Card::new(CardRank::Four, Suit::Clubs),
-                Card::new(CardRank::Five, Suit::Clubs),
-                Card::new(CardRank::Seven, Suit::Clubs),
-            ])
-            .unwrap(),
-        }
-        .compare();
+        // let input = CompareHands {
+        //     black: Hand::new(vec![
+        //         Card::new(CardRank::Ace, Suit::Hearts),
+        //         Card::new(CardRank::Ace, Suit::Diamonds),
+        //         Card::new(CardRank::Four, Suit::Hearts),
+        //         Card::new(CardRank::Five, Suit::Hearts),
+        //         Card::new(CardRank::Six, Suit::Hearts),
+        //     ])
+        //     .unwrap(),
+        //     white: Hand::new(vec![
+        //         Card::new(CardRank::Ace, Suit::Clubs),
+        //         Card::new(CardRank::Ace, Suit::Spades),
+        //         Card::new(CardRank::Four, Suit::Clubs),
+        //         Card::new(CardRank::Five, Suit::Clubs),
+        //         Card::new(CardRank::Seven, Suit::Clubs),
+        //     ])
+        //     .unwrap(),
+        // }
+        // .compare();
 
         // assert_eq!(
         //     input,

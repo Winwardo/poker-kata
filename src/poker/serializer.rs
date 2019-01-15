@@ -1,6 +1,4 @@
-use super::card::*;
 use super::comparison_result::*;
-use super::hand::*;
 
 pub fn serialize(result: &ComparisonResult) -> Result<String, ()> {
     // result

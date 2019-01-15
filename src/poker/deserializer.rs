@@ -2,7 +2,6 @@ use regex::Regex;
 
 use super::card::*;
 use super::compare_hands::*;
-use super::comparison_result::*;
 use super::hand::*;
 
 #[derive(Debug, PartialEq)]
@@ -38,7 +37,7 @@ fn deserialize_cards_to_hand(text: &str) -> Result<Hand, DeserializeError> {
 
 pub fn deserialize(input: &str) -> Result<CompareHands, DeserializeError> {
     let re = Regex::new(r"^Black: (.*)  White: (.*)$").expect("Invalid Regex in deserializer.");
-    
+
     re.captures(input)
         .and_then(|captures| {
             // Did we match something after "Black" and after "White"?
@@ -60,10 +59,6 @@ pub fn deserialize(input: &str) -> Result<CompareHands, DeserializeError> {
                 white: white_hand,
             })
         })
-}
-
-pub fn serialize(result: &ComparisonResult) -> String {
-    String::from("White wins. - with high card: Ace")
 }
 
 #[cfg(test)]

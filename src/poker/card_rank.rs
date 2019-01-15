@@ -1,5 +1,3 @@
-use std::fmt;
-
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
 pub enum CardRank {
     Two = 2,
