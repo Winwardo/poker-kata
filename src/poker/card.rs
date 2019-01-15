@@ -16,14 +16,6 @@ pub enum CardError {
 }
 
 impl Card {
-    pub fn new(rank: CardRank, suit: Suit) -> Card {
-        Card {
-            rank: rank,
-            suit: suit,
-            _s: (),
-        }
-    }
-
     pub fn from_string(input: &str) -> Result<Card, CardError> {
         let mut chars = input.chars();
         let count = input.chars().count();
