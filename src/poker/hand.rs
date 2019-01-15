@@ -22,6 +22,7 @@ impl Hand {
             x if x < 5 => Err(HandError::NotEnoughCards),
             x if x > 5 => Err(HandError::TooManyCards),
             x => {
+                // Check for duplicate cards
                 if BTreeSet::from_iter(cards.clone()).len() == x {
                     Ok(Hand {
                         cards: cards,

@@ -23,6 +23,63 @@ fn find_pair(cards: &Vec<Card>) -> Option<(&Card, &Card)> {
     })
 }
 
+fn high_card(sorted_black: &Vec<Card>, sorted_white: &Vec<Card>) -> Option<ComparisonResult> {
+    let highest_rank_black = &sorted_black.iter().max().unwrap();
+    let highest_rank_white = &sorted_white.iter().max().unwrap();
+
+    if highest_rank_black > highest_rank_white {
+        return Some(ComparisonResult::make(
+            Players::Black,
+            WinType::HighCard(highest_rank_black.rank),
+        ));
+    } else if highest_rank_black < highest_rank_white {
+        return Some(ComparisonResult::make(
+            Players::White,
+            WinType::HighCard(highest_rank_white.rank),
+        ));
+    } else {
+        None
+    }
+}
+
+fn pair(sorted_black: &Vec<Card>, sorted_white: &Vec<Card>) -> Option<ComparisonResult> {
+    let black_pair = find_pair(&sorted_black);
+    let white_pair = find_pair(&sorted_white);
+
+    if black_pair.is_some() {
+        if white_pair.is_some() {
+            let (b1, _b2) = black_pair.unwrap();
+            let (w1, _w2) = white_pair.unwrap();
+
+            if b1 > w1 {
+                return Some(ComparisonResult::make(
+                    Players::Black,
+                    WinType::Pair(b1.rank),
+                ));
+            } else {
+                // find the largest non-pair card
+
+            }
+        } else {
+            let (b1, _b2) = black_pair.unwrap();
+            return Some(ComparisonResult::make(
+                Players::Black,
+                WinType::Pair(b1.rank),
+            ));
+        }
+    } else {
+        if white_pair.is_some() {
+            let (w1, _w2) = white_pair.unwrap();
+            return Some(ComparisonResult::make(
+                Players::White,
+                WinType::Pair(w1.rank),
+            ));
+        }
+    }
+
+    None
+}
+
 impl CompareHands {
     pub fn compare(&self) -> ComparisonResult {
         let mut sorted_black = self.black.cards.clone();
@@ -33,53 +90,9 @@ impl CompareHands {
         sorted_white.sort();
         sorted_white.reverse();
 
-        // Check for a pair
-        {
-            let black_pair = find_pair(&sorted_black);
-            let white_pair = find_pair(&sorted_white);
-
-            if black_pair.is_some() {
-                if white_pair.is_some() {
-                    let (b1, _b2) = black_pair.unwrap();
-                    let (w1, _w2) = white_pair.unwrap();
-
-                    if b1 > w1 {
-                        return ComparisonResult::make(Players::Black, WinType::Pair(b1.rank));
-                    } else {
-                        // find the largest non-pair card
-
-                    }
-                } else {
-                    let (b1, _b2) = black_pair.unwrap();
-                    return ComparisonResult::make(Players::Black, WinType::Pair(b1.rank));
-                }
-            } else {
-                if white_pair.is_some() {
-                    let (w1, _w2) = white_pair.unwrap();
-                    return ComparisonResult::make(Players::White, WinType::Pair(w1.rank));
-                }
-            }
-        }
-
-        // Check for tie
-        {
-            let highest_rank_black = &sorted_black.iter().max().unwrap();
-            let highest_rank_white = &sorted_white.iter().max().unwrap();
-
-            if highest_rank_black > highest_rank_white {
-                return ComparisonResult::make(
-                    Players::Black,
-                    WinType::HighCard(highest_rank_black.rank),
-                );
-            } else if highest_rank_black < highest_rank_white {
-                return ComparisonResult::make(
-                    Players::White,
-                    WinType::HighCard(highest_rank_white.rank),
-                );
-            } else {
-                return ComparisonResult::tie();
-            }
-        }
+        None.or(pair(&sorted_black, &sorted_white))
+            .or(high_card(&sorted_black, &sorted_white))
+            .unwrap_or(ComparisonResult::tie())
     }
 }
 
@@ -173,29 +186,29 @@ mod tests {
 
     #[test]
     fn pair_both_white_high_card_that_isnt_in_pair_wins() {
-        // let input = CompareHands {
-        //     black: Hand::new(vec![
-        //         Card::new(CardRank::Ace, Suit::Hearts),
-        //         Card::new(CardRank::Ace, Suit::Diamonds),
-        //         Card::new(CardRank::Four, Suit::Hearts),
-        //         Card::new(CardRank::Five, Suit::Hearts),
-        //         Card::new(CardRank::Six, Suit::Hearts),
-        //     ])
-        //     .unwrap(),
-        //     white: Hand::new(vec![
-        //         Card::new(CardRank::Ace, Suit::Clubs),
-        //         Card::new(CardRank::Ace, Suit::Spades),
-        //         Card::new(CardRank::Four, Suit::Clubs),
-        //         Card::new(CardRank::Five, Suit::Clubs),
-        //         Card::new(CardRank::Seven, Suit::Clubs),
-        //     ])
-        //     .unwrap(),
-        // }
-        // .compare();
+        let input = CompareHands {
+            black: Hand::new(vec![
+                Card::new(CardRank::Ace, Suit::Hearts),
+                Card::new(CardRank::Ace, Suit::Diamonds),
+                Card::new(CardRank::Four, Suit::Hearts),
+                Card::new(CardRank::Five, Suit::Hearts),
+                Card::new(CardRank::Six, Suit::Hearts),
+            ])
+            .unwrap(),
+            white: Hand::new(vec![
+                Card::new(CardRank::Ace, Suit::Clubs),
+                Card::new(CardRank::Ace, Suit::Spades),
+                Card::new(CardRank::Four, Suit::Clubs),
+                Card::new(CardRank::Five, Suit::Clubs),
+                Card::new(CardRank::Seven, Suit::Clubs),
+            ])
+            .unwrap(),
+        }
+        .compare();
 
-        // assert_eq!(
-        //     input,
-        //     ComparisonResult::make(Players::White, WinType::PairHighCard(CardRank::Seven))
-        // );
+        assert_eq!(
+            input,
+            ComparisonResult::make(Players::White, WinType::PairHighCard(CardRank::Seven))
+        );
     }
 }

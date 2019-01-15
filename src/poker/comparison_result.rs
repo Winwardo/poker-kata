@@ -19,7 +19,7 @@ impl Players {
 pub enum WinType {
     HighCard(CardRank),
     Pair(CardRank),
-    // PairHighCard(CardRank),
+    PairHighCard(CardRank),
 }
 
 #[derive(Debug, PartialEq)]
