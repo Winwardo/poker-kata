@@ -5,6 +5,7 @@ use super::suits::*;
 pub struct Card {
     pub rank: CardRank,
     pub suit: Suit,
+    _s: (),
 }
 
 #[derive(Debug, PartialEq)]
@@ -19,6 +20,7 @@ impl Card {
         Card {
             rank: rank,
             suit: suit,
+            _s: (),
         }
     }
 
@@ -57,6 +59,7 @@ impl Card {
             Ok(Card {
                 rank: rank,
                 suit: suit,
+                _s: (),
             })
         } else {
             Err(CardError::WrongLength)

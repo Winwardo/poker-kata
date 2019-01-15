@@ -43,57 +43,95 @@ fn high_card(sorted_black: &Vec<Card>, sorted_white: &Vec<Card>) -> Option<Compa
 }
 
 fn pair(sorted_black: &Vec<Card>, sorted_white: &Vec<Card>) -> Option<ComparisonResult> {
-    let black_pair = find_pair(&sorted_black);
-    let white_pair = find_pair(&sorted_white);
+    let black_pair_opt = find_pair(&sorted_black);
+    let white_pair_opt = find_pair(&sorted_white);
 
-    if black_pair.is_some() {
-        if white_pair.is_some() {
-            let (b1, _b2) = black_pair.unwrap();
-            let (w1, _w2) = white_pair.unwrap();
+    if let Some(black_pair) = black_pair_opt {
+        // Black has a pair
+        let (black1, _black2) = black_pair;
 
-            if b1 > w1 {
-                return Some(ComparisonResult::make(
+        // Note that I inlined the destructuring for white here - I think it's harder to read though
+        if let Some((white1, _white2)) = white_pair_opt {
+            // White has a pair
+            if black1 > white1 {
+                // Black wins with a better pair
+                Some(ComparisonResult::make(
                     Players::Black,
-                    WinType::Pair(b1.rank),
-                ));
+                    WinType::Pair(black1.rank),
+                ))
             } else {
-                // find the largest non-pair card
+                // Both have equal pairs
+                // Let's search through the lower cards for a high
+                // First remove the existing pair cards, then just reuse the HighCard algorithm
+                let target_rank = black1.rank;
 
+                // No reason this closure couldn't have been a separate free-standing function, I just wanted it here
+                let remove_pair = |v: &Vec<Card>| {
+                    v.into_iter()
+                        .filter(|card| card.rank != target_rank)
+                        .cloned() // This explicitly clones each card, so we can return Vec<Card> - otherwise we'd have to return Vec<&Card>, as we haven't marked Card as Copy
+                        .collect()
+                };
+
+                let filtered_black = remove_pair(&sorted_black);
+                let filtered_white = remove_pair(&sorted_white);
+
+                // Let's be clear: This is some stupid ass code about to happen.
+                // if high_card is None, then all this code is ignored and we return None
+                high_card(&filtered_black, &filtered_white).and_then(|result| {
+                    // Same here - if result.winner is None, ignore the .and_then and propagate the None
+                    result.winner.and_then(|winner| {
+                        // Match the winner.win_type against HighCard - if it's any other value, you guessed it, propagate None.
+                        match winner.win_type {
+                            // We destructure to pull the rank value out, and reuse it to convert from HighCard(rank) to PairHighCard(rank)
+                            WinType::HighCard(rank) => Some(ComparisonResult::make(
+                                winner.player,
+                                WinType::PairHighCard(rank),
+                            )),
+                            _ => None,
+                        }
+                    })
+                })
             }
         } else {
-            let (b1, _b2) = black_pair.unwrap();
-            return Some(ComparisonResult::make(
+            // Black has a pair, white does not
+            Some(ComparisonResult::make(
                 Players::Black,
-                WinType::Pair(b1.rank),
-            ));
+                WinType::Pair(black1.rank),
+            ))
         }
     } else {
-        if white_pair.is_some() {
-            let (w1, _w2) = white_pair.unwrap();
-            return Some(ComparisonResult::make(
+        // Black does not have a pair
+        if let Some((white1, _white2)) = white_pair_opt {
+            Some(ComparisonResult::make(
                 Players::White,
-                WinType::Pair(w1.rank),
-            ));
+                WinType::Pair(white1.rank),
+            ))
+        } else {
+            None
         }
     }
-
-    None
 }
 
 impl CompareHands {
     pub fn compare(&self) -> ComparisonResult {
-        let mut sorted_black = self.black.cards.clone();
-        sorted_black.sort();
-        sorted_black.reverse();
-
-        let mut sorted_white = self.white.cards.clone();
-        sorted_white.sort();
-        sorted_white.reverse();
+        let sorted_black = sort_and_reverse(&self.black.cards);
+        let sorted_white = sort_and_reverse(&self.white.cards);
 
         None.or(pair(&sorted_black, &sorted_white))
             .or(high_card(&sorted_black, &sorted_white))
             .unwrap_or(ComparisonResult::tie())
     }
+}
+
+fn sort_and_reverse<T>(vec: &Vec<T>) -> Vec<T>
+where
+    T: std::cmp::Ord + std::clone::Clone,
+{
+    let mut result = vec.clone();
+    result.sort();
+    result.reverse();
+    result.to_vec()
 }
 
 #[cfg(test)]
