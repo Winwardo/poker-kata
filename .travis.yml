@@ -9,5 +9,4 @@ rust:
   - stable
 # The main build
 script:
-  - cargo build
   - cargo test
