@@ -1,5 +1,6 @@
+mod deserializer;
 mod serializer;
-pub use self::serializer::deserialize;
+pub use self::deserializer::deserialize;
 pub use self::serializer::serialize;
 
 mod card;

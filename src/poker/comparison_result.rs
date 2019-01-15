@@ -6,6 +6,15 @@ pub enum Players {
     White,
 }
 
+impl Players {
+    pub fn to_string(&self) -> &str {
+        match *self {
+            Players::Black => "Black",
+            Players::White => "White",
+        }
+    }
+}
+
 #[derive(Debug, PartialEq)]
 pub enum WinType {
     HighCard(CardRank),

@@ -1,69 +1,25 @@
-use regex::Regex;
-
 use super::card::*;
-use super::compare_hands::*;
 use super::comparison_result::*;
 use super::hand::*;
 
-#[derive(Debug, PartialEq)]
-pub enum DeserializeError {
-    BadFormat,
-    InvalidHand(HandError),
-    InvalidCards(CardError),
-}
+pub fn serialize(result: &ComparisonResult) -> Result<String, ()> {
+    // result
+    //     .winner
+    //     .map(|x| String::from("White wins. - with high card: Ace"))
+    //     .or(String::from("Tie."))
 
-fn text_to_cards(text: &str) -> Result<Vec<Card>, CardError> {
-    let cards = text
-        .split(" ")
-        .collect::<Vec<&str>>()
-        .into_iter()
-        .map(|card_str| Card::from_string(card_str));
-
-    let mut result: Vec<Card> = Vec::new();
-    for card in cards {
-        if card.is_err() {
-            return Err(card.unwrap_err());
-        } else {
-            result.push(card.unwrap());
+    if let Some(winner) = &result.winner {
+        match winner.win_type {
+            WinType::HighCard(card) => Ok(format!(
+                "{player} wins. - with high card: {card}",
+                player = winner.player.to_string(),
+                card = card.to_string()
+            )),
+            _ => Err(()),
         }
+    } else {
+        Ok(String::from("Tie."))
     }
-
-    Ok(result)
-}
-
-fn deserialize_cards_to_hand(text: &str) -> Result<Hand, DeserializeError> {
-    Hand::new(text_to_cards(text).map_err(|e| DeserializeError::InvalidCards(e))?)
-        .map_err(|e| DeserializeError::InvalidHand(e))
-}
-
-pub fn deserialize(input: &str) -> Result<CompareHands, DeserializeError> {
-    let re = Regex::new(r"^Black: (.*)  White: (.*)$").expect("Invalid Regex in deserializer.");
-
-    re.captures(input)
-        .and_then(|captures| {
-            // Did we match something after "Black" and after "White"?
-            let black = captures.get(1)?;
-            let white = captures.get(2)?;
-
-            Some((black.as_str(), white.as_str()))
-        })
-        .ok_or(DeserializeError::BadFormat)
-        .and_then(|matches| {
-            // Convert text to lists of Card
-            let (black_text, white_text) = matches;
-
-            let black_hand = deserialize_cards_to_hand(black_text)?;
-            let white_hand = deserialize_cards_to_hand(white_text)?;
-
-            Ok(CompareHands {
-                black: black_hand,
-                white: white_hand,
-            })
-        })
-}
-
-pub fn serialize(result: &ComparisonResult) -> String {
-    String::from("White wins. - with high card: Ace")
 }
 
 #[cfg(test)]
@@ -71,54 +27,28 @@ mod tests {
     use super::*;
 
     use super::super::card_rank::*;
-    use super::super::suits::*;
 
     #[test]
-    fn simple_hand_deserializes() {
-        let input = "Black: 2H 3D 5S 9C KD  White: 2C 3H 4S 8C AH";
-        let expected = CompareHands {
-            black: Hand::new(vec![
-                Card::new(CardRank::Two, Suit::Hearts),
-                Card::new(CardRank::Three, Suit::Diamonds),
-                Card::new(CardRank::Five, Suit::Spades),
-                Card::new(CardRank::Nine, Suit::Clubs),
-                Card::new(CardRank::King, Suit::Diamonds),
-            ])
-            .unwrap(),
-            white: Hand::new(vec![
-                Card::new(CardRank::Two, Suit::Clubs),
-                Card::new(CardRank::Three, Suit::Hearts),
-                Card::new(CardRank::Four, Suit::Spades),
-                Card::new(CardRank::Eight, Suit::Clubs),
-                Card::new(CardRank::Ace, Suit::Hearts),
-            ])
-            .unwrap(),
-        };
+    fn white_wins_highcard_ace() {
+        let input = ComparisonResult::make(Players::White, WinType::HighCard(CardRank::Ace));
+        let expected = String::from("White wins. - with high card: Ace");
 
-        assert_eq!(Ok(expected), deserialize(&input));
+        assert_eq!(Ok(expected), serialize(&input));
     }
 
     #[test]
-    fn bad_format_errors() {
-        let input = "Bad format";
-        assert_eq!(Err(DeserializeError::BadFormat), deserialize(&input));
+    fn black_wins_highcard_seven() {
+        let input = ComparisonResult::make(Players::Black, WinType::HighCard(CardRank::Seven));
+        let expected = String::from("Black wins. - with high card: 7");
+
+        assert_eq!(Ok(expected), serialize(&input));
     }
 
     #[test]
-    fn bad_hand_black_has_too_few() {
-        let input = "Black: 2H 3D 5S 9C  White: 2C 3H 4S 8C AH";
-        assert_eq!(
-            Err(DeserializeError::InvalidHand(HandError::NotEnoughCards)),
-            deserialize(&input)
-        );
-    }
+    fn tie() {
+        let input = ComparisonResult::tie();
+        let expected = String::from("Tie.");
 
-    #[test]
-    fn bad_card_invalid_suit() {
-        let input = "Black: 2Z 3D 5S 9C KD  White: 2C 3H 4S 8C AH";
-        assert_eq!(
-            Err(DeserializeError::InvalidCards(CardError::InvalidSuit('Z'))),
-            deserialize(&input)
-        );
+        assert_eq!(Ok(expected), serialize(&input));
     }
 }

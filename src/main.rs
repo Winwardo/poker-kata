@@ -6,14 +6,10 @@ fn main() {
 
 mod poker;
 
-// use self::poker::*;
-
 #[allow(dead_code)]
-fn poker_hand(input: &str) -> Result<String, String> {
+fn poker_hand(input: &str) -> Result<String, &str> {
     // NOT SAFE
-    Ok(poker::serialize(
-        &poker::deserialize(input).unwrap().compare(),
-    ))
+    poker::serialize(&poker::deserialize(input).unwrap().compare()).map_err(|_| "Error")
 }
 
 #[cfg(test)]
