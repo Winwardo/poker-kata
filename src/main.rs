@@ -10,7 +10,7 @@ fn poker_hand(input: &str) -> Result<String, &str> {
 
 #[cfg(test)]
 mod tests {
-    // Note this useful idiom: importing names from outer (for mod tests) scope.
+    // Note this useful idiom: importing names from outer (for mod tests) scope
     extern crate rstest;
     use rstest::rstest_parametrize;
 
