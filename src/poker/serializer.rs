@@ -1,11 +1,6 @@
 use super::comparison_result::*;
 
 pub fn serialize(result: &ComparisonResult) -> Result<String, ()> {
-    // result
-    //     .winner
-    //     .map(|x| String::from("White wins. - with high card: Ace"))
-    //     .or(String::from("Tie."))
-
     if let Some(winner) = &result.winner {
         match winner.win_type {
             WinType::HighCard(card) => Ok(format!(
