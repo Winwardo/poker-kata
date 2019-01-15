@@ -1,14 +1,10 @@
 extern crate regex;
 
-fn main() {
-    println!("Hello, world!");
-}
-
 mod poker;
 
 #[allow(dead_code)]
 fn poker_hand(input: &str) -> Result<String, &str> {
-    // NOT SAFE
+    // We should handle this error better
     poker::serialize(&poker::deserialize(input).unwrap().compare()).map_err(|_| "Error")
 }
 

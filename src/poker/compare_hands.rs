@@ -120,7 +120,7 @@ impl CompareHands {
 
         None.or(pair(&sorted_black, &sorted_white))
             .or(high_card(&sorted_black, &sorted_white))
-            .unwrap_or(ComparisonResult::tie())
+            .unwrap_or(ComparisonResult::tie()) // Defaulting to tie is actually a bad strategy, let's fix this
     }
 }
 

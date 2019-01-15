@@ -58,3 +58,22 @@ impl Card {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // Note that you can write impl Struct as much as you want, in any file.
+    // The implementation will only become accessible / compiled if you import the module.
+    // Which means, I can add this impl behind a test build flag.
+    // This code is only visible and accessible when running tests, and is compiled out in shipping.
+    impl Card {
+        pub fn new(rank: CardRank, suit: Suit) -> Card {
+            Card {
+                rank: rank,
+                suit: suit,
+                _s: (),
+            }
+        }
+    }
+}
